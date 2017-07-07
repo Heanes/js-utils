@@ -1,0 +1,13 @@
+# IntelliJ project files
+.idea
+*.iml
+
+# Eclipse project files
+.settings
+.project
+
+# svn
+.svn
+
+# node.js
+.node_modules
