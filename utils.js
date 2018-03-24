@@ -43,9 +43,25 @@ var HE = {
     /**
      * @doc 小数位数转换，传入数值，及要保留的小数位数
      */
-    convertDecimals: convertDecimals
+    convertDecimals: convertDecimals,
+
+    /**
+     * @doc 获取url参数
+     */
+    getUrlRequest: getUrlRequest
 };
 
+
+/**
+ * @doc 防重复点击
+ * @param $dom 要绑定的dom
+ * @param option 参数
+ * @author Heanes
+ * @time 2017-07-21 18:48:27 周五
+ */
+function preventRepeatClick($dom, option) {
+    ;
+}
 
 /**
  * 对日期进行格式化，
@@ -109,7 +125,7 @@ function fromUnixTime(timeStamp, format){
 }
 
 /**
- * @doc 将时间戳转为时间字符 @todo 还未完工，仅可以将yyyy-mm-dd转换为时间戳
+ * @doc 将时间字符转为时间戳 @todo 还未完工，仅可以将yyyy-mm-dd转换为时间戳
  * @param timeStr
  * @param format
  * @returns {number}
@@ -160,6 +176,9 @@ function isNotExist(object) {
  * @time 2017-07-03 18:00:18 周一
  */
 function isEmpty(object) {
+    if(object instanceof Array || object instanceof Object){
+        return object.length <= 0;
+    }
     return object === null || object === undefined || object === '';
 
 }
@@ -176,7 +195,7 @@ function isNotEmpty(object) {
 }
 
 /**
- * @doc 小数位数转换
+ * @doc 小数位数转换，传入数值，及要保留的小数位数
  * @param number 要转换的数值
  * @param decimalPlaces 保留的小数位数
  * @returns {number}
@@ -186,4 +205,54 @@ function isNotEmpty(object) {
 function convertDecimals(number, decimalPlaces) {
     var formatTimes = Math.pow(10, decimalPlaces);
     return parseInt(parseFloat(number) * formatTimes) / formatTimes;
+}
+
+/**
+ * @doc 解析url参数
+ * @returns {Object}
+ * @constructor
+ */
+function getUrlRequest() {
+    var url = location.search; //获取url中"?"符后的字串
+    var theRequest = {};
+    if (url.indexOf("?") !== -1) {
+        var str = url.substr(1);
+        var strs = str.split("&");
+        for (var i = 0; i < strs.length; i++) {
+            theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+        }
+    }
+    return theRequest;
+}
+
+/**
+ * @doc 解析url相关信息
+ * @returns {Object}
+ * @constructor
+ * @author Heanes
+ * @time 2017-08-21 20:14:21 周一
+ */
+function parseURLInfo(url) {
+    var a = document.createElement('a');
+    a.href = url;
+    return {
+        source: url,
+        protocol: a.protocol.replace(':', ''),
+        host: a.hostname,
+        port: a.port,
+        query: a.search,
+        params: (function () {
+            var ret = {},
+                seg = a.search.replace(/^\?/, '').split('&'),
+                len = seg.length, i = 0, s;
+            for (; i < len; i++) {
+                if (!seg[i]) {
+                    continue;
+                }
+                s = seg[i].split('=');
+                ret[s[0]] = s[1];
+            }
+            return ret;
+        })
+    }
 }
